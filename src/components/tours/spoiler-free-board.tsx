@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { BackLink, TextPostCard } from "@/components/ui/text-post-card";
 import { PageIntro } from "@/components/ui/page-shell";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/common/button"; // ※環境に合わせて適宜調整してください
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -35,7 +35,9 @@ type SpoilerFreeBoardProps = {
 
 function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
   const searchParams = useSearchParams();
-  const initialVenue = searchParams.get("venue") || "ALL";
+  
+  // nullish coalescing を使って確実に string にする
+  const initialVenue = searchParams.get("venue") ?? "ALL";
 
   const tour = getTourById(tourId);
   const artist = tour ? getArtistById(tour.artistId) : undefined;
@@ -80,7 +82,6 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
     }
   }, [searchParams]);
 
-  // 引数を明示的に string 型にして、かつ optional にしないことで型不整合を防ぐ
   const handleVenueFilterChange = (venue: string) => {
     setActiveVenueFilter(venue);
     setCurrentPage(1);
