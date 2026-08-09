@@ -59,7 +59,7 @@ export function SetlistTimeline({ showId }: { showId: string }) {
           return (
             <Link
               key={item.id}
-              href={`/items/${item.id}`}
+              href={`/shows/${showId}/items/${item.id}`}
               className="group grid grid-cols-[auto_1fr_auto] items-center gap-3.5 rounded-2xl border border-slate-200 bg-white p-3.5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-emerald-400 hover:shadow-md sm:gap-4 sm:px-5"
             >
               {/* パステルグリーンの曲順バッジ */}
