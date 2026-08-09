@@ -354,7 +354,7 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
                     </div>
 
                     <TextPostCard
-                      authorName={post.authorName}
+                      authorName={post.authorName ?? ""}
                       body={post.body}
                       createdAt={post.createdAt}
                     />
