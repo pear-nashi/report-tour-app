@@ -80,8 +80,9 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
     }
   }, [searchParams]);
 
-  const handleVenueFilterChange = (venue: string) => {
-    setActiveVenueFilter(venue);
+  // 引数に undefined を許容するように修正
+  const handleVenueFilterChange = (venue: string | undefined) => {
+    setActiveVenueFilter(venue ?? "ALL");
     setCurrentPage(1);
   };
 
@@ -318,7 +319,7 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
                         {post.venue ? (
                           <button
                             type="button"
-                            onClick={() => handleVenueFilterChange(post.venue!)}
+                            onClick={() => handleVenueFilterChange(post.venue)}
                             className="rounded-full border border-slate-300 bg-slate-100 px-2.5 py-0.5 text-xs font-bold text-slate-800 transition-colors hover:bg-slate-200"
                           >
                             📍 {post.venue}
