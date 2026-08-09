@@ -7,7 +7,13 @@ import { getArtists, getToursByArtistId } from "@/lib/store";
 
 export function HomeSelector() {
   const router = useRouter();
-  const artists = useMemo(() => getArtists(), []);
+  
+  // getArtists() で取得した一覧から、非表示にしたいアーティストのIDを除外する
+  // ※ ミセスの実際のID（例: "mrs" や "mrs-green-apple" など）に書き換えてね
+  const artists = useMemo(() => {
+    return getArtists().filter((artist) => artist.id !== "mrs");
+  }, []);
+
   const [selectedArtistId, setSelectedArtistId] = useState<string | null>(null);
 
   const tours = selectedArtistId ? getToursByArtistId(selectedArtistId) : [];
