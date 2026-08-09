@@ -367,7 +367,7 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
             {totalPages > 1 && (
               <div className="mt-6 flex items-center justify-center gap-2">
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   size="sm"
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
@@ -394,7 +394,7 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
                   )}
                 </div>
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   size="sm"
                   onClick={() =>
                     setCurrentPage((p) => Math.min(totalPages, p + 1))
