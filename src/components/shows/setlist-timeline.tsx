@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   getItemPostCount,
   getShowById,
@@ -15,19 +15,25 @@ export function SetlistTimeline({ showId }: { showId: string }) {
   const tour = show ? getTourById(show.tourId) : undefined;
 
   const [items] = useState<TimelineItem[]>(() => getTimelineByShowId(showId));
-  const [counts] = useState<Record<string, number>>(() => {
-    const timeline = getTimelineByShowId(showId);
-    return Object.fromEntries(
-      timeline.map((item) => [item.id, getItemPostCount(item.id)]),
-    );
-  });
+  const [counts, setCounts] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    async function fetchCounts() {
+      const newCounts: Record<string, number> = {};
+      for (const item of items) {
+        // 非同期で正確なコメント数を取得
+        newCounts[item.id] = await getItemPostCount(item.id);
+      }
+      setCounts(newCounts);
+    }
+    fetchCounts();
+  }, [items]);
 
   if (!show) {
     return <p className="py-16 text-center text-slate-600 font-medium">公演が見つかりません</p>;
   }
 
   return (
-    /* 一番外側の div に text-slate-900 を指定して親からの白文字継承を確実に上書き */
     <div className="text-slate-900">
       {/* 戻るリンク */}
       <Link
@@ -54,7 +60,7 @@ export function SetlistTimeline({ showId }: { showId: string }) {
       <section className="space-y-2">
         {items.map((item) => {
           const orderLabel = String(item.order).padStart(2, "0");
-          const count = counts[item.id] ?? 0;
+          const count = counts[item.id] ?? item.seedCommentCount ?? 0;
 
           return (
             <Link

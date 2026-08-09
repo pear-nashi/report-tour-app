@@ -53,7 +53,7 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
 
   const [myPostIds, setMyPostIds] = useState<string[]>([]);
 
-  // ★ 初期値を安全な "ALL" に固定し、108行目の型エラーを完全解消
+  // ★ 初期値を安全な "ALL" に固定
   const [activeVenueFilter, setActiveVenueFilter] = useState<string>("ALL");
   const [activeFilterTag, setActiveFilterTag] = useState<BoardTagType | "ALL">("ALL");
 
@@ -61,16 +61,26 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    setPosts(getBoardPostsByTourId(tourId));
-    try {
-      const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (saved) {
-        setMyPostIds(JSON.parse(saved));
+    async function fetchPosts() {
+      try {
+        const data = await getBoardPostsByTourId(tourId);
+        setPosts(Array.isArray(data) ? data : []);
+      } catch {
+        setPosts([]);
       }
-    } catch {
-      // ignore
+
+      try {
+        const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+        if (saved) {
+          setMyPostIds(JSON.parse(saved));
+        }
+      } catch {
+        // ignore
+      }
+      setReady(true);
     }
-    setReady(true);
+
+    fetchPosts();
   }, [tourId]);
 
   useEffect(() => {
@@ -96,11 +106,11 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
     );
   }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!body.trim()) return;
 
-    const newPost = createBoardPost({
+    const newPost = await createBoardPost({
       tourId,
       venue: selectedVenue !== "" ? selectedVenue : undefined,
       authorName: authorName.trim() || "",
@@ -121,14 +131,16 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
     setBody("");
     setSelectedTags([]);
     setSelectedVenue("");
-    setPosts(getBoardPostsByTourId(tourId));
+
+    const data = await getBoardPostsByTourId(tourId);
+    setPosts(Array.isArray(data) ? data : []);
     setCurrentPage(1);
   }
 
-  function handleDelete(postId: string) {
+  async function handleDelete(postId: string) {
     if (!confirm("投稿を削除してもよろしいですか？")) return;
 
-    deleteBoardPost(postId);
+    await deleteBoardPost(postId);
 
     const updatedMyIds = myPostIds.filter((id) => id !== postId);
     setMyPostIds(updatedMyIds);
@@ -138,7 +150,8 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
       // ignore
     }
 
-    setPosts(getBoardPostsByTourId(tourId));
+    const data = await getBoardPostsByTourId(tourId);
+    setPosts(Array.isArray(data) ? data : []);
   }
 
   if (!tour) {

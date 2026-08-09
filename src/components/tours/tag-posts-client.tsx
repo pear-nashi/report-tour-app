@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   getItemPostsByTag,
   getShowById,
@@ -16,7 +16,6 @@ type TagPostsClientProps = {
   tourId: string;
 };
 
-// 曲/MCごとにグループ化された構造の型
 type GroupedItemPost = {
   item: TimelineItem;
   title: string;
@@ -31,17 +30,40 @@ type GroupedItemPost = {
 export function TagPostsClient({ tourId }: TagPostsClientProps) {
   const tour = getTourById(tourId);
   const [selectedTag, setSelectedTag] = useState<TagType>("演出全般");
+  const [tagPosts, setTagPosts] = useState<ItemPost[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  // タグが変更されたときにSupabaseから非同期でデータを取得する
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchPosts() {
+      setLoading(true);
+      try {
+        const posts = await getItemPostsByTag(selectedTag);
+        if (isMounted) {
+          setTagPosts(posts);
+        }
+      } catch (error) {
+        console.error("Failed to fetch tag posts:", error);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    }
+    fetchPosts();
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedTag]);
 
   if (!tour) {
     return <p className="py-16 text-center text-slate-700 font-bold">ツアーが見つかりません</p>;
   }
 
-  // 選択中のタグの投稿を取得し、セットリスト順・曲ごとにグループ化
+  // 取得した投稿をセットリスト順・曲ごとにグループ化
   const groupedPosts = useMemo(() => {
-    const allTagPosts = getItemPostsByTag(selectedTag);
-
-    // 1. ツアーに属する投稿を抽出
-    const tourPosts = allTagPosts
+    const tourPosts = tagPosts
       .map((post) => {
         const item = getTimelineItemById(post.itemId);
         const show = item ? getShowById(item.showId) : undefined;
@@ -54,7 +76,6 @@ export function TagPostsClient({ tourId }: TagPostsClientProps) {
           entry.show.tourId === tourId
       );
 
-    // 2. 曲タイトル（または itemId / タイトル＋種別）ごとにグループ化
     const groupMap = new Map<string, GroupedItemPost>();
 
     tourPosts.forEach(({ post, item, show }) => {
@@ -73,13 +94,12 @@ export function TagPostsClient({ tourId }: TagPostsClientProps) {
       groupMap.get(key)!.posts.push({ post, show });
     });
 
-    // 3. セットリストの曲順（order）で並べ替え
     return Array.from(groupMap.values()).sort((a, b) => a.order - b.order);
-  }, [selectedTag, tourId]);
+  }, [tagPosts, tourId]);
 
   return (
     <div className="text-black font-sans">
-      {/* 戻るボタン（カプセル風ピル型） */}
+      {/* 戻るボタン */}
       <Link
         href={`/tours/${tourId}`}
         className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-300 text-xs text-slate-800 font-bold transition-all shadow-sm active:translate-y-0.5 mb-6"
@@ -96,7 +116,7 @@ export function TagPostsClient({ tourId }: TagPostsClientProps) {
         </p>
       </div>
 
-      {/* タグ切り替えタブ（ぷっくりカプセル風） */}
+      {/* タグ切り替えタブ */}
       <div className="mb-8 flex flex-wrap gap-2 border-b border-slate-200 pb-5">
         {TAGS.map((tag) => {
           const isActive = selectedTag === tag;
@@ -119,7 +139,9 @@ export function TagPostsClient({ tourId }: TagPostsClientProps) {
 
       {/* メモ一覧（曲順グループ表示） */}
       <section className="space-y-6">
-        {groupedPosts.length === 0 ? (
+        {loading ? (
+          <p className="py-12 text-center text-sm text-slate-500 font-bold">読み込み中...</p>
+        ) : groupedPosts.length === 0 ? (
           <p className="rounded-3xl border-2 border-dashed border-slate-300 bg-slate-50/80 py-12 text-center text-sm text-slate-600 font-bold">
             「#{selectedTag}」がついたコメントはまだありません。
           </p>
@@ -129,7 +151,6 @@ export function TagPostsClient({ tourId }: TagPostsClientProps) {
               key={`${group.title}-${group.order}`}
               className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-all"
             >
-              {/* 曲・MCヘッダー (セットリスト順) */}
               <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50/80 px-5 py-3.5">
                 <div className="flex items-center gap-3">
                   <span className="font-mono text-xs font-bold text-emerald-900 bg-emerald-100 border border-emerald-300/80 px-2.5 py-0.5 rounded-full">
@@ -144,19 +165,15 @@ export function TagPostsClient({ tourId }: TagPostsClientProps) {
                 </span>
               </div>
 
-              {/* その曲に対する各公演のメモ一覧 */}
               <div className="p-4 space-y-3">
                 {group.posts.map(({ post, show }) => (
                   <div
                     key={post.id}
                     className="rounded-2xl border border-slate-200 bg-slate-50/40 p-4"
                   >
-                    {/* 本文（主役） */}
                     <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-800 font-medium">
                       {post.body}
                     </p>
-
-                    {/* 右下のメタ情報（会場・公演日・投稿者のみ） */}
                     <div className="mt-3 flex flex-wrap items-center justify-end gap-x-2 gap-y-1 text-right text-[11px] text-slate-500 font-bold">
                       <span className="text-slate-600">📍 {show.venue}（{show.date}）</span>
                       <span>・</span>

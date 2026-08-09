@@ -27,45 +27,63 @@ export function TourWordsReport({ tourId }: TourWordsReportProps) {
   const tour = getTourById(tourId);
   const [activeTab, setActiveTab] = useState<"all" | "mc" | "greeting">("all");
   
-  const [isMounted, setIsMounted] = useState(false);
+  const [groupedShows, setGroupedShows] = useState<GroupedShowWords[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  // 非同期で公演ごとのMC・挨拶データを取得して組み立てる
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
+    let isMounted = true;
 
-  const groupedShows = useMemo(() => {
-    if (!isMounted) return [];
+    async function fetchWordReports() {
+      setLoading(true);
+      try {
+        const shows = getShowsByTourId(tourId);
+        const groups: GroupedShowWords[] = [];
 
-    const shows = getShowsByTourId(tourId);
-    const groups: GroupedShowWords[] = [];
+        for (const show of shows) {
+          const timelineItems = getTimelineByShowId(show.id);
+          const showPosts: GroupedShowWords["posts"] = [];
 
-    shows.forEach((show) => {
-      const timelineItems = getTimelineByShowId(show.id);
-      const showPosts: GroupedShowWords["posts"] = [];
+          for (const item of timelineItems) {
+            const isMcOrGreeting =
+              item.type === "mc" ||
+              item.title.includes("MC") ||
+              item.title.includes("挨拶") ||
+              item.title.includes("MC・挨拶");
 
-      timelineItems.forEach((item) => {
-        const isMcOrGreeting =
-          item.type === "mc" ||
-          item.title.includes("MC") ||
-          item.title.includes("挨拶") ||
-          item.title.includes("MC・挨拶");
+            if (isMcOrGreeting) {
+              const posts = await getItemPostsByItemId(item.id);
+              const type = item.title.includes("挨拶") ? "greeting" : "mc";
 
-        if (isMcOrGreeting) {
-          const posts = getItemPostsByItemId(item.id);
-          const type = item.title.includes("挨拶") ? "greeting" : "mc";
+              posts.forEach((post) => {
+                showPosts.push({ item, post, type });
+              });
+            }
+          }
 
-          posts.forEach((post) => {
-            showPosts.push({ item, post, type });
-          });
+          if (showPosts.length > 0) {
+            groups.push({ show, posts: showPosts });
+          }
         }
-      });
 
-      if (showPosts.length > 0) {
-        groups.push({ show, posts: showPosts });
+        if (isMounted) {
+          setGroupedShows(groups);
+        }
+      } catch (error) {
+        console.error("Failed to fetch word reports:", error);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
       }
-    });
+    }
 
-    return groups;
-  }, [tourId, isMounted]);
+    fetchWordReports();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [tourId]);
 
   if (!tour) {
     return <p className="py-16 text-center text-slate-700 font-bold">ツアーが見つかりません</p>;
@@ -124,7 +142,7 @@ export function TourWordsReport({ tourId }: TourWordsReportProps) {
 
       {/* 公演ごとのグループ表示 */}
       <section className="space-y-6">
-        {!isMounted ? (
+        {loading ? (
           <div className="text-center py-12 text-slate-400 text-sm font-medium">
             読み込み中...
           </div>
@@ -203,3 +221,5 @@ export function TourWordsReport({ tourId }: TourWordsReportProps) {
     </div>
   );
 }
+
+export default TourWordsReport;
