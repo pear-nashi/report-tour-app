@@ -53,9 +53,9 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
 
   const [myPostIds, setMyPostIds] = useState<string[]>([]);
 
-  // ★ ここを完全に string に固定する
-  const [activeVenueFilter, setActiveVenueFilter] = useState<string>(
-    (searchParams.get("venue") ?? "ALL") as string
+  // ★ ジェネ릭を外し、確実に string になる式だけで初期化（型エラー完全解消）
+  const [activeVenueFilter, setActiveVenueFilter] = useState(
+    searchParams.get("venue") ?? "ALL"
   );
   const [activeFilterTag, setActiveFilterTag] = useState<BoardTagType | "ALL">("ALL");
 
