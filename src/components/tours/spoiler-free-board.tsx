@@ -53,9 +53,9 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
 
   const [myPostIds, setMyPostIds] = useState<string[]>([]);
 
-  // ★ ジェネ릭を外し、確実に string になる式だけで初期化（型エラー完全解消）
-  const [activeVenueFilter, setActiveVenueFilter] = useState(
-    searchParams.get("venue") ?? "ALL"
+  // ★ searchParams が null の可能性を完全に断ち切る
+  const [activeVenueFilter, setActiveVenueFilter] = useState<string>(
+    searchParams?.get("venue") ?? "ALL"
   );
   const [activeFilterTag, setActiveFilterTag] = useState<BoardTagType | "ALL">("ALL");
 
@@ -76,7 +76,7 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
   }, [tourId]);
 
   useEffect(() => {
-    const param = searchParams.get("venue");
+    const param = searchParams?.get("venue");
     if (param) {
       setActiveVenueFilter(param);
     }
