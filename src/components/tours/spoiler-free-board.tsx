@@ -103,7 +103,7 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
     const newPost = createBoardPost({
       tourId,
       venue: selectedVenue !== "" ? selectedVenue : undefined,
-      authorName: authorName.trim() || undefined,
+      authorName: authorName.trim() || "",
       body: body.slice(0, MAX_LENGTH),
       tags: selectedTags,
     });
