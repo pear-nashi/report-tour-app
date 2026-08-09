@@ -54,6 +54,7 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
 
   const [myPostIds, setMyPostIds] = useState<string[]>([]);
 
+  // initialVenue が string であることを担保するため文字列に落とし込む
   const [activeVenueFilter, setActiveVenueFilter] = useState<string>(initialVenue);
   const [activeFilterTag, setActiveFilterTag] = useState<BoardTagType | "ALL">("ALL");
 
@@ -80,8 +81,9 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
     }
   }, [searchParams]);
 
-  const handleVenueFilterChange = (venue?: string) => {
-    setActiveVenueFilter(venue ?? "ALL");
+  // デフォルト引数を持たせて必ず string 型になるようにする
+  const handleVenueFilterChange = (venue: string = "ALL") => {
+    setActiveVenueFilter(venue);
     setCurrentPage(1);
   };
 
