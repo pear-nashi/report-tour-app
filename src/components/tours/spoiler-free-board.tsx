@@ -35,7 +35,6 @@ type SpoilerFreeBoardProps = {
 
 function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
   const searchParams = useSearchParams();
-  const initialVenue = searchParams.get("venue") ?? "ALL";
 
   const tour = getTourById(tourId);
   const artist = tour ? getArtistById(tour.artistId) : undefined;
@@ -54,7 +53,10 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
 
   const [myPostIds, setMyPostIds] = useState<string[]>([]);
 
-  const [activeVenueFilter, setActiveVenueFilter] = useState<string>(initialVenue);
+  // ★ ここで型エラーにならないよう、明示的に string を保証する形に修正
+  const [activeVenueFilter, setActiveVenueFilter] = useState<string>(
+    searchParams.get("venue") || "ALL"
+  );
   const [activeFilterTag, setActiveFilterTag] = useState<BoardTagType | "ALL">("ALL");
 
   const [currentPage, setCurrentPage] = useState(1);
