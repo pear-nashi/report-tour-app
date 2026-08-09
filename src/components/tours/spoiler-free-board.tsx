@@ -53,9 +53,8 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
 
   const [myPostIds, setMyPostIds] = useState<string[]>([]);
 
-  const [activeVenueFilter, setActiveVenueFilter] = useState<string>(
-    searchParams?.get("venue") ?? "ALL"
-  );
+  // ★ 初期値を安全な "ALL" に固定し、108行目の型エラーを完全解消
+  const [activeVenueFilter, setActiveVenueFilter] = useState<string>("ALL");
   const [activeFilterTag, setActiveFilterTag] = useState<BoardTagType | "ALL">("ALL");
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -77,8 +76,7 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
   useEffect(() => {
     const param = searchParams?.get("venue");
     if (param) {
-      // ★ ここで string に確定させる（型エラー完全解消）
-      setActiveVenueFilter(param as string);
+      setActiveVenueFilter(param);
     }
   }, [searchParams]);
 
