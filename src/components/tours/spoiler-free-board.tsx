@@ -54,7 +54,6 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
 
   const [myPostIds, setMyPostIds] = useState<string[]>([]);
 
-  // initialVenue が string であることを担保するため文字列に落とし込む
   const [activeVenueFilter, setActiveVenueFilter] = useState<string>(initialVenue);
   const [activeFilterTag, setActiveFilterTag] = useState<BoardTagType | "ALL">("ALL");
 
@@ -81,8 +80,8 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
     }
   }, [searchParams]);
 
-  // デフォルト引数を持たせて必ず string 型になるようにする
-  const handleVenueFilterChange = (venue: string = "ALL") => {
+  // 引数を明示的に string 型にして、かつ optional にしないことで型不整合を防ぐ
+  const handleVenueFilterChange = (venue: string) => {
     setActiveVenueFilter(venue);
     setCurrentPage(1);
   };
@@ -320,7 +319,7 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
                         {post.venue ? (
                           <button
                             type="button"
-                            onClick={() => handleVenueFilterChange(post.venue)}
+                            onClick={() => handleVenueFilterChange(post.venue ?? "ALL")}
                             className="rounded-full border border-slate-300 bg-slate-100 px-2.5 py-0.5 text-xs font-bold text-slate-800 transition-colors hover:bg-slate-200"
                           >
                             📍 {post.venue}
