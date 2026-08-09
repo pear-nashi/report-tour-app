@@ -80,8 +80,7 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
     }
   }, [searchParams]);
 
-  // 引数に undefined を許容するように修正
-  const handleVenueFilterChange = (venue: string | undefined) => {
+  const handleVenueFilterChange = (venue?: string) => {
     setActiveVenueFilter(venue ?? "ALL");
     setCurrentPage(1);
   };
