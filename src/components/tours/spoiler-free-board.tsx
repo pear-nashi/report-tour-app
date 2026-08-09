@@ -368,7 +368,6 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
               <div className="mt-6 flex items-center justify-center gap-2">
                 <Button
                   variant="secondary"
-                  size="sm"
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
                   className="rounded-full border-2 border-slate-300 bg-white text-xs font-bold text-slate-700 shadow-xs active:translate-y-0.5"
@@ -395,7 +394,6 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
                 </div>
                 <Button
                   variant="secondary"
-                  size="sm"
                   onClick={() =>
                     setCurrentPage((p) => Math.min(totalPages, p + 1))
                   }
@@ -410,7 +408,7 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
         )}
       </section>
 
-      {/* 投稿フォームエリア（指定のデザインスタイルに完全統一） */}
+      {/* 投稿フォームエリア */}
       <section>
         <h2 className="mb-3 text-sm font-bold tracking-wide text-slate-900">
           レポ・情報を投稿する
@@ -453,7 +451,7 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
             </div>
           </div>
 
-          {/* タグ選択（ぷっくりカプセル風ボタン） */}
+          {/* タグ選択 */}
           <div className="mb-5">
             <Label className="mb-2 block !text-slate-900 !font-bold text-sm">
               タグを選択（任意）
@@ -506,7 +504,7 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
             </span>
           </div>
 
-          {/* ぷっくり投稿ボタン */}
+          {/* 投稿ボタン */}
           <Button
             type="submit"
             className="w-full sm:w-auto rounded-full font-bold px-7 py-2.5 h-auto text-sm bg-emerald-500 hover:bg-emerald-600 text-white shadow-md border-b-2 border-emerald-700 active:border-b-0 active:translate-y-0.5 transition-all disabled:opacity-50"
