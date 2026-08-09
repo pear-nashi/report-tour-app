@@ -186,18 +186,9 @@ const arashiBaseSetlist: Array<{ type: TimelineItem["type"]; title: string }> = 
   { type: "song", title: "Five" },
 ];
 
-function generateSlug(title: string, index: number): string {
-  // 記号やスペースを置換してIDっぽくする
-  const slug = title
-    .toLowerCase()
-    .replace(/[・〜！!]/g, "")
-    .replace(/\s+/g, "-");
-  return `${index + 1}-${slug}`;
-}
-
 export const timelineItems: TimelineItem[] = shows.flatMap((show) =>
   arashiBaseSetlist.map((item, index) => ({
-    id: `${show.id}-${generateSlug(item.title, index)}`,
+    id: `${show.id}-${index + 1}`,
     showId: show.id,
     order: index + 1,
     type: item.type,
