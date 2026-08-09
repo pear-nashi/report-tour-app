@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { BackLink, TextPostCard } from "@/components/ui/text-post-card";
 import { PageIntro } from "@/components/ui/page-shell";
-import { Button } from "@/common/button"; // ※環境に合わせて適宜調整してください
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -35,8 +35,6 @@ type SpoilerFreeBoardProps = {
 
 function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
   const searchParams = useSearchParams();
-  
-  // nullish coalescing を使って確実に string にする
   const initialVenue = searchParams.get("venue") ?? "ALL";
 
   const tour = getTourById(tourId);
