@@ -53,7 +53,6 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
 
   const [myPostIds, setMyPostIds] = useState<string[]>([]);
 
-  // ★ searchParams が null の可能性を完全に断ち切る
   const [activeVenueFilter, setActiveVenueFilter] = useState<string>(
     searchParams?.get("venue") ?? "ALL"
   );
@@ -78,7 +77,8 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
   useEffect(() => {
     const param = searchParams?.get("venue");
     if (param) {
-      setActiveVenueFilter(param);
+      // ★ ここで string に確定させる（型エラー完全解消）
+      setActiveVenueFilter(param as string);
     }
   }, [searchParams]);
 
