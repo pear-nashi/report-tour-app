@@ -1,14 +1,14 @@
 export type Artist = {
   id: string;
   name: string;
-  slug?: string; // ← 必須（slugがないデータもあるのでオプショナル「?」にしておく）
+  slug?: string;
 };
 
 export type Tour = {
   id: string;
   artistId: string;
   name: string;
-  subtitle?: string; // ★ここを追加！これでサブタイトルのエラーが消えます
+  subtitle?: string;
   year?: number;
 };
 
@@ -21,7 +21,7 @@ export type Show = {
   label: string;
 };
 
-export type TimelineItemType = "song" | "mc" | "other" | "overture"; // ★ "overture" を追加！
+export type TimelineItemType = "song" | "mc" | "other" | "overture";
 
 export type TimelineItem = {
   id: string;
@@ -39,8 +39,8 @@ export type BoardPost = {
   id: string;
   tourId: string;
   showId?: string;
-  venue?: string; // ★ここを追加！これで venue のエラーが消えます
-  authorName: string;
+  venue?: string;
+  authorName?: string; // ★ オプショナルに変更
   body: string;
   tags?: BoardTagType[];
   createdAt: string;
@@ -49,8 +49,8 @@ export type BoardPost = {
 export type BoardPostInput = {
   tourId: string;
   showId?: string;
-  venue?: string; // ★ここを追加！
-  authorName: string;
+  venue?: string;
+  authorName?: string; // ★ オプショナルに変更
   body: string;
   tags?: BoardTagType[];
 };
@@ -61,7 +61,7 @@ export type TagType = "演出全般" | "モニター映像" | "衣装";
 export type ItemPost = {
   id: string;
   itemId: string;
-  authorName: string;
+  authorName?: string; // ★ オプショナルに変更
   body: string;
   tags?: TagType[];
   createdAt: string;
@@ -69,7 +69,7 @@ export type ItemPost = {
 
 export type ItemPostInput = {
   itemId: string;
-  authorName: string;
+  authorName?: string; // ★ オプショナルに変更
   body: string;
   tags?: TagType[];
 };
