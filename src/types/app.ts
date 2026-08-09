@@ -40,7 +40,7 @@ export type BoardPost = {
   tourId: string;
   showId?: string;
   venue?: string;
-  authorName?: string; // ★ オプショナルに変更
+  authorName?: string;
   body: string;
   tags?: BoardTagType[];
   createdAt: string;
@@ -50,7 +50,7 @@ export type BoardPostInput = {
   tourId: string;
   showId?: string;
   venue?: string;
-  authorName?: string; // ★ オプショナルに変更
+  authorName?: string;
   body: string;
   tags?: BoardTagType[];
 };
@@ -61,7 +61,7 @@ export type TagType = "演出全般" | "モニター映像" | "衣装";
 export type ItemPost = {
   id: string;
   itemId: string;
-  authorName?: string; // ★ オプショナルに変更
+  authorName?: string;
   body: string;
   tags?: TagType[];
   createdAt: string;
@@ -69,7 +69,7 @@ export type ItemPost = {
 
 export type ItemPostInput = {
   itemId: string;
-  authorName?: string; // ★ オプショナルに変更
+  authorName?: string;
   body: string;
   tags?: TagType[];
 };
