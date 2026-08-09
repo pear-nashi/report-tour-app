@@ -84,8 +84,8 @@ export function TourWordsReport({ tourId }: TourWordsReportProps) {
       {/* ヘッダー情報 */}
       <div className="bg-blue-50/60 p-5 rounded-3xl border border-blue-100/80">
         <p className="text-xs font-bold text-blue-800 tracking-wider mb-1">{tour.name}</p>
-        <h2 className="text-xl font-black text-slate-900 sm:text-2xl">MC・挨拶 振り返りログ</h2>
-        <p className="mt-1 text-sm text-slate-600 font-medium">あのときどんな話をしてたっけ？をサクッと探せるページ</p>
+        <h2 className="text-xl font-black text-slate-900 sm:text-2xl">MC・挨拶レポート</h2>
+        <p className="mt-1 text-sm text-slate-600 font-medium">公演日毎にどんな話をしていたか確認することができます。</p>
       </div>
 
       {/* 切り替えタブ */}

@@ -90,9 +90,9 @@ export function TagPostsClient({ tourId }: TagPostsClientProps) {
       {/* ヘッダー情報 */}
       <div className="mb-8 bg-emerald-50/60 p-5 rounded-3xl border border-emerald-100/80">
         <p className="text-xs font-bold text-emerald-800 tracking-wider mb-1">{tour.name}</p>
-        <h1 className="text-2xl font-black text-slate-900 sm:text-3xl tracking-wide">全日程タグ別一覧</h1>
+        <h1 className="text-2xl font-black text-slate-900 sm:text-3xl tracking-wide">全公演タグ別コメントまとめ</h1>
         <p className="mt-2 text-sm text-slate-600 font-bold">
-          ✨ 全公演のセットリスト順に、指定したタグのレポ・メモを一覧で確認できます。
+          セットリスト順に、指定したタグ付きのコメントを全公演横断で確認することができます。
         </p>
       </div>
 

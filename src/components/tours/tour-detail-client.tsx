@@ -92,8 +92,8 @@ export function TourDetailClient({ tourId }: TourDetailClientProps) {
           <div className="flex items-center gap-3">
             <span className="text-xl">🏷️</span>
             <div>
-              <p className="font-bold text-emerald-950">演出タグありコメントのツアー全体まとめ</p>
-              <p className="text-xs text-slate-600 font-medium">「衣装」「モニター映像」「演出全般」などを特定公演日関係なくタグごとにコメントをチェック</p>
+              <p className="font-bold text-emerald-950">演出タグ付きコメントまとめ</p>
+              <p className="text-xs text-slate-600 font-medium">「衣装」「モニター映像」「演出全般」などのタグ付きコメントを公演日横断でチェック</p>
             </div>
           </div>
           <span className="text-xs font-bold text-emerald-800 bg-white px-3 py-1.5 rounded-xl border border-emerald-200 shadow-sm">
@@ -111,8 +111,8 @@ export function TourDetailClient({ tourId }: TourDetailClientProps) {
           <div className="flex items-center gap-3">
             <span className="text-xl">💬</span>
             <div>
-              <p className="font-bold text-blue-950">MC・挨拶 振り返りログ</p>
-              <p className="text-xs text-slate-600 font-medium">あの公演でどんな話をしてたっけ？MCや挨拶の話題を横断チェック</p>
+              <p className="font-bold text-blue-950">MC・挨拶 まとめ</p>
+              <p className="text-xs text-slate-600 font-medium">MCや挨拶を公演日横断でチェック</p>
             </div>
           </div>
           <span className="text-xs font-bold text-blue-800 bg-white px-3 py-1.5 rounded-xl border border-blue-200 shadow-sm">
@@ -171,7 +171,7 @@ export function TourDetailClient({ tourId }: TourDetailClientProps) {
                         {show.time}開演
                       </span>
                     </div>
-                    <span className="text-xs font-bold text-slate-500 hover:text-slate-800">セトリ・MC →</span>
+                    <span className="text-xs font-bold text-slate-500 hover:text-slate-800">セトリ→</span>
                   </Link>
                 );
               })}

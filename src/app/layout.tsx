@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SiteHeader } from "@/components/layout/site-header";
 import "./globals.css";
@@ -19,7 +19,15 @@ export const metadata: Metadata = {
     "写真も評価ボタンもない、テキスト特化型のライブ・舞台観測メモ集積所",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+// スマホでの意図しない拡大・固定を防ぐ設定
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="ja"
