@@ -48,12 +48,12 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
   const [posts, setPosts] = useState<BoardPost[]>([]);
   const [authorName, setAuthorName] = useState("");
   const [body, setBody] = useState("");
+  const [deletePassword, setDeletePassword] = useState("");
   const [selectedVenue, setSelectedVenue] = useState<string>("");
   const [selectedTags, setSelectedTags] = useState<BoardTagType[]>([]);
 
   const [myPostIds, setMyPostIds] = useState<string[]>([]);
 
-  // ★ 初期値を安全な "ALL" に固定
   const [activeVenueFilter, setActiveVenueFilter] = useState<string>("ALL");
   const [activeFilterTag, setActiveFilterTag] = useState<BoardTagType | "ALL">("ALL");
 
@@ -116,6 +116,7 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
       authorName: authorName.trim() || "",
       body: body.slice(0, MAX_LENGTH),
       tags: selectedTags,
+      deletePassword: deletePassword.trim() || undefined,
     });
 
     if (newPost && newPost.id) {
@@ -129,6 +130,7 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
     }
 
     setBody("");
+    setDeletePassword("");
     setSelectedTags([]);
     setSelectedVenue("");
 
@@ -137,21 +139,43 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
     setCurrentPage(1);
   }
 
-  async function handleDelete(postId: string) {
-    if (!confirm("投稿を削除してもよろしいですか？")) return;
+  async function handleDelete(postId: string, isMyPost: boolean, postDeletePassword?: string) {
+    let passwordToSend: string | undefined = undefined;
 
-    await deleteBoardPost(postId);
-
-    const updatedMyIds = myPostIds.filter((id) => id !== postId);
-    setMyPostIds(updatedMyIds);
-    try {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedMyIds));
-    } catch {
-      // ignore
+    // 修正: 自分の投稿であっても、削除用パスワードが設定されているならパスワード入力を必須にする
+    if (postDeletePassword) {
+      const inputPassword = prompt("投稿時に設定した削除用パスワードを入力してください：");
+      if (inputPassword === null) return; // キャンセルされた場合
+      if (inputPassword !== postDeletePassword) {
+        alert("パスワードが間違っています。");
+        return;
+      }
+      passwordToSend = inputPassword;
+    } else {
+      // パスワードが設定されていない投稿の場合
+      if (!isMyPost) {
+        alert("この投稿を削除する権限がありません。");
+        return;
+      }
+      if (!confirm("投稿を削除してもよろしいですか？")) return;
     }
 
-    const data = await getBoardPostsByTourId(tourId);
-    setPosts(Array.isArray(data) ? data : []);
+    try {
+      await deleteBoardPost(postId, passwordToSend);
+
+      const updatedMyIds = myPostIds.filter((id) => id !== postId);
+      setMyPostIds(updatedMyIds);
+      try {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedMyIds));
+      } catch {
+        // ignore
+      }
+
+      const data = await getBoardPostsByTourId(tourId);
+      setPosts(Array.isArray(data) ? data : []);
+    } catch {
+      alert("削除に失敗しました。");
+    }
   }
 
   if (!tour) {
@@ -176,6 +200,7 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
     startIndex,
     startIndex + ITEMS_PER_PAGE
   );
+
 
   return (
     <div className="text-slate-900">
@@ -355,10 +380,11 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
                           ))}
                       </div>
 
-                      {isMyPost && (
+                      {/* 自分の投稿、またはパスワード付き投稿の場合に削除ボタンを表示 */}
+                      {(isMyPost || post.deletePassword) && (
                         <button
                           type="button"
-                          onClick={() => handleDelete(post.id)}
+                          onClick={() => handleDelete(post.id, isMyPost, post.deletePassword)}
                           className="text-xs font-bold text-rose-600 hover:text-rose-800 hover:underline"
                         >
                           削除
@@ -462,6 +488,26 @@ function SpoilerFreeBoardContent({ tourId }: SpoilerFreeBoardProps) {
                 ))}
               </select>
             </div>
+          </div>
+
+          <div className="mb-4">
+            <Label htmlFor="board-delete-password" className="!text-slate-900 !font-bold text-sm mb-1 block">
+              削除用パスワード（任意）
+            </Label>
+            <Input
+              id="board-delete-password"
+              type="password"
+              value={deletePassword}
+              onChange={(event) => setDeletePassword(event.target.value)}
+              placeholder="アルファベット、数字など"
+              className="mt-1 !rounded-2xl !bg-slate-50 !border-2 !border-slate-200 text-black font-medium placeholder:text-slate-400 focus:!bg-white focus:!border-emerald-500 transition-all"
+            />
+            <p className="mt-1 text-xs text-slate-500">
+              ※パスワードを設定しておくと、別の端末やブラウザからでも削除できるようになります。
+            </p>
+            <p className="mt-0.5 text-xs text-slate-500">
+              ※削除用パスワードは、半角英数字で設定してください。忘れないようにご注意ください。
+            </p>
           </div>
 
           {/* タグ選択 */}

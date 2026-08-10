@@ -78,6 +78,7 @@ export async function getAllBoardPosts(): Promise<BoardPost[]> {
     authorName: row.author_name,
     body: row.body,
     tags: row.tags || [],
+    deletePassword: row.delete_password || undefined, // 修正: マッピングを追加
     createdAt: row.created_at,
   }));
 
@@ -104,6 +105,7 @@ export async function getAllItemPosts(): Promise<ItemPost[]> {
     authorName: row.author_name,
     body: row.body,
     tags: row.tags || [],
+    deletePassword: row.delete_password || undefined,
     createdAt: row.created_at,
   }));
 
@@ -147,6 +149,7 @@ export async function createBoardPost(input: BoardPostInput): Promise<BoardPost>
     author_name: input.authorName.trim() || "匿名",
     body: input.body.trim(),
     tags: input.tags || [],
+    delete_password: input.deletePassword?.trim() || null, // 修正: パスワードを保存するように追加
   };
 
   const { data, error } = await supabase
@@ -166,17 +169,19 @@ export async function createBoardPost(input: BoardPostInput): Promise<BoardPost>
     authorName: data.author_name,
     body: data.body,
     tags: data.tags || [],
+    deletePassword: data.delete_password || undefined,
     createdAt: data.created_at,
   };
 }
 
-// タイムラインコメントへの新規投稿（Supabaseへ保存）
+// --- タイムラインコメントへの新規投稿（Supabaseへ保存）---
 export async function createItemPost(input: ItemPostInput): Promise<ItemPost> {
   const newPostData = {
     item_id: input.itemId,
     author_name: input.authorName.trim() || "匿名",
     body: input.body.trim(),
     tags: input.tags || [],
+    delete_password: input.deletePassword?.trim() || null,
   };
 
   const { data, error } = await supabase
@@ -195,30 +200,71 @@ export async function createItemPost(input: ItemPostInput): Promise<ItemPost> {
     authorName: data.author_name,
     body: data.body,
     tags: data.tags || [],
+    deletePassword: data.delete_password || undefined,
     createdAt: data.created_at,
   };
 }
 
-// 掲示板投稿の削除
-export async function deleteBoardPost(postId: string): Promise<void> {
-  const { error } = await supabase
+// 掲示板投稿の削除（パスワード照合付きに修正）
+export async function deleteBoardPost(postId: string, passwordInput?: string): Promise<boolean> {
+  const { data: targetPost, error: fetchError } = await supabase
     .from("board_posts")
-    .delete()
-    .eq("id", postId);
+    .select("delete_password")
+    .eq("id", postId)
+    .single();
+
+  if (fetchError || !targetPost) {
+    console.error("Error fetching board post for deletion:", fetchError?.message);
+    return false;
+  }
+
+  let query = supabase.from("board_posts").delete().eq("id", postId);
+
+  if (targetPost.delete_password) {
+    if (!passwordInput || passwordInput !== targetPost.delete_password) {
+      return false;
+    }
+    query = query.eq("delete_password", passwordInput);
+  }
+
+  const { data, error } = await query.select();
 
   if (error) {
     console.error("Error deleting board post:", error.message);
+    return false;
   }
+
+  return data && data.length > 0;
 }
 
-// タイムラインコメントの削除
-export async function deleteItemPost(postId: string): Promise<void> {
-  const { error } = await supabase
+// タイムラインコメントの削除（パスワード照合付き）
+export async function deleteItemPost(postId: string, passwordInput?: string): Promise<boolean> {
+  const { data: targetPost, error: fetchError } = await supabase
     .from("item_posts")
-    .delete()
-    .eq("id", postId);
+    .select("delete_password")
+    .eq("id", postId)
+    .single();
+
+  if (fetchError || !targetPost) {
+    console.error("Error fetching post for deletion:", fetchError?.message);
+    return false;
+  }
+
+  let query = supabase.from("item_posts").delete().eq("id", postId);
+
+  if (targetPost.delete_password) {
+    if (!passwordInput || passwordInput !== targetPost.delete_password) {
+      return false;
+    }
+    query = query.eq("delete_password", passwordInput);
+  }
+
+  const { data, error } = await query.select();
 
   if (error) {
     console.error("Error deleting item post:", error.message);
+    return false;
   }
+
+  return data && data.length > 0;
 }

@@ -19,6 +19,7 @@ import type { ItemPost, TagType } from "@/types/app";
 
 const MAX_LENGTH = 200;
 const AVAILABLE_TAGS: TagType[] = ["演出全般", "モニター映像", "衣装"];
+const LOCAL_STORAGE_KEY = "my_item_post_ids";
 
 type ItemPostsClientProps = {
   itemId: string;
@@ -32,12 +33,30 @@ export function ItemPostsClient({ itemId }: ItemPostsClientProps) {
   const [posts, setPosts] = useState<ItemPost[]>([]);
   const [authorName, setAuthorName] = useState("");
   const [body, setBody] = useState("");
+  const [deletePassword, setDeletePassword] = useState("");
   const [selectedTags, setSelectedTags] = useState<TagType[]>([]);
+
+  const [myPostIds, setMyPostIds] = useState<string[]>([]);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     async function fetchPosts() {
-      const data = await getItemPostsByItemId(itemId);
-      setPosts(data);
+      try {
+        const data = await getItemPostsByItemId(itemId);
+        setPosts(Array.isArray(data) ? data : []);
+      } catch {
+        setPosts([]);
+      }
+
+      try {
+        const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+        if (saved) {
+          setMyPostIds(JSON.parse(saved));
+        }
+      } catch {
+        // ignore
+      }
+      setReady(true);
     }
     fetchPosts();
   }, [itemId]);
@@ -58,24 +77,73 @@ export function ItemPostsClient({ itemId }: ItemPostsClientProps) {
     event.preventDefault();
     if (!body.trim()) return;
 
-    await createItemPost({
+    // 修正: deletePassword をストアへ渡すように追加
+    const newPost = await createItemPost({
       itemId,
-      authorName,
+      authorName: authorName.trim() || "",
       body: body.slice(0, MAX_LENGTH),
       tags: selectedTags,
+      deletePassword: deletePassword.trim() || undefined,
     });
 
+    if (newPost && newPost.id) {
+      const updatedMyIds = [...myPostIds, newPost.id];
+      setMyPostIds(updatedMyIds);
+      try {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedMyIds));
+      } catch {
+        // ignore
+      }
+    }
+
     setBody("");
+    setDeletePassword("");
     setSelectedTags([]);
+
     const data = await getItemPostsByItemId(itemId);
-    setPosts(data);
+    setPosts(Array.isArray(data) ? data : []);
   }
 
-  async function handleDelete(postId: string) {
-    if (confirm("このコメントを削除しますか？")) {
-      await deleteItemPost(postId);
-      const data = await getItemPostsByItemId(itemId);
-      setPosts(data);
+  async function handleDelete(postId: string, isMyPost: boolean, postDeletePassword?: string) {
+    let passwordToSend: string | undefined = undefined;
+
+    // 修正: 自分の投稿であっても、削除用パスワードが設定されているならパスワード入力を必須にする
+    if (postDeletePassword) {
+      const inputPassword = prompt("投稿時に設定した削除用パスワードを入力してください：");
+      if (inputPassword === null) return; // キャンセルされた場合
+      if (inputPassword !== postDeletePassword) {
+        alert("パスワードが間違っています。");
+        return;
+      }
+      passwordToSend = inputPassword;
+    } else {
+      // パスワードが設定されていない投稿の場合
+      if (!isMyPost) {
+        alert("この投稿を削除する権限がありません。");
+        return;
+      }
+      if (!confirm("投稿を削除してもよろしいですか？")) return;
+    }
+
+    try {
+      const success = await deleteItemPost(postId, passwordToSend);
+
+      if (success !== false) {
+        const updatedMyIds = myPostIds.filter((id) => id !== postId);
+        setMyPostIds(updatedMyIds);
+        try {
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedMyIds));
+        } catch {
+          // ignore
+        }
+
+        const data = await getItemPostsByItemId(itemId);
+        setPosts(Array.isArray(data) ? data : []);
+      } else {
+        alert("削除に失敗しました。");
+      }
+    } catch {
+      alert("削除に失敗しました。");
     }
   }
 
@@ -106,45 +174,54 @@ export function ItemPostsClient({ itemId }: ItemPostsClientProps) {
         <h2 className="mb-3 text-sm font-bold tracking-wider text-slate-900 flex items-center gap-2">
           <span>💬</span> コメント一覧（{posts.length}件）
         </h2>
-        {posts.length === 0 ? (
+        {!ready ? (
+          <div className="h-40 animate-pulse rounded-3xl border border-slate-200 bg-slate-100" />
+        ) : posts.length === 0 ? (
           <p className="rounded-3xl border-2 border-dashed border-slate-300 bg-slate-50/80 py-10 text-center text-sm text-slate-600 font-bold">
             まだコメントがありません。最初のコメントを投稿してみましょう！
           </p>
         ) : (
           <div className="space-y-4">
-            {posts.map((post) => (
-              <div
-                key={post.id}
-                className="relative group rounded-3xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition-all"
-              >
-                <button
-                  type="button"
-                  onClick={() => handleDelete(post.id)}
-                  className="absolute top-4 right-4 text-xs font-bold text-slate-400 hover:text-red-600 transition-colors"
-                >
-                  削除
-                </button>
+            {posts.map((post) => {
+              const isMyPost = myPostIds.includes(post.id);
 
-                {post.tags && post.tags.length > 0 && (
-                  <div className="mb-3 flex flex-wrap gap-1.5 pr-12">
-                    {post.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="rounded-full bg-emerald-100/80 px-3 py-1 text-[11px] font-bold text-emerald-900 border border-emerald-300/80 shadow-2xs"
-                      >
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-                
-                <TextPostCard
-                  authorName={post.authorName ?? ""}
-                  body={post.body}
-                  createdAt={post.createdAt}
-                />
-              </div>
-            ))}
+              return (
+                <div
+                  key={post.id}
+                  className="relative group rounded-3xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition-all"
+                >
+                  {/* 自分の投稿、またはパスワードがある投稿には削除ボタンを表示 */}
+                  {(isMyPost || post.deletePassword) && (
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(post.id, isMyPost, post.deletePassword)}
+                      className="absolute top-4 right-4 text-xs font-bold text-slate-400 hover:text-red-600 transition-colors"
+                    >
+                      削除
+                    </button>
+                  )}
+
+                  {post.tags && post.tags.length > 0 && (
+                    <div className="mb-3 flex flex-wrap gap-1.5 pr-12">
+                      {post.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-full bg-emerald-100/80 px-3 py-1 text-[11px] font-bold text-emerald-900 border border-emerald-300/80 shadow-2xs"
+                        >
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  
+                  <TextPostCard
+                    authorName={post.authorName ?? ""}
+                    body={post.body}
+                    createdAt={post.createdAt}
+                  />
+                </div>
+              );
+            })}
           </div>
         )}
       </section>
@@ -168,6 +245,24 @@ export function ItemPostsClient({ itemId }: ItemPostsClientProps) {
               placeholder="ニックネーム"
               className="mt-1 !rounded-2xl !bg-slate-50 !border-2 !border-slate-200 text-black font-medium placeholder:text-slate-400 focus:!bg-white focus:!border-emerald-500 transition-all h-11"
             />
+          </div>
+
+          <div className="mb-5">
+            <Label htmlFor="delete-password" className="!text-slate-900 !font-bold text-sm mb-1 block">
+              削除用パスワード（任意）
+            </Label>
+            <Input
+              id="delete-password"
+              type="password"
+              value={deletePassword}
+              onChange={(event) => setDeletePassword(event.target.value)}
+              placeholder="アルファベット、数字など"
+              className="mt-1 !rounded-2xl !bg-slate-50 !border-2 !border-slate-200 text-black font-medium placeholder:text-slate-400 focus:!bg-white focus:!border-emerald-500 transition-all h-11"
+            />
+            <p className="mt-1 text-xs text-slate-500">
+              ※パスワードを設定しておくと、別の端末やブラウザからでも削除できるようになります。<br />
+              ※削除用パスワードは、半角英数字で設定してください。忘れないようにご注意ください。
+            </p>
           </div>
 
           <div className="mb-5">
@@ -222,7 +317,8 @@ export function ItemPostsClient({ itemId }: ItemPostsClientProps) {
 
           <Button
             type="submit"
-            className="w-full sm:w-auto rounded-full font-bold px-7 py-2.5 h-auto text-sm bg-emerald-500 hover:bg-emerald-600 text-white shadow-md border-b-2 border-emerald-700 active:border-b-0 active:translate-y-0.5 transition-all"
+            className="w-full sm:w-auto rounded-full font-bold px-7 py-2.5 h-auto text-sm bg-emerald-500 hover:bg-emerald-600 text-white shadow-md border-b-2 border-emerald-700 active:border-b-0 active:translate-y-0.5 transition-all disabled:opacity-50"
+            disabled={!body.trim()}
           >
             投稿する ✨
           </Button>

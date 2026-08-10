@@ -40,19 +40,21 @@ export type BoardPost = {
   tourId: string;
   showId?: string;
   venue?: string;
-  authorName: string; // ★ 必須の string に戻す
+  authorName: string;
   body: string;
   tags?: BoardTagType[];
   createdAt: string;
+  deletePassword?: string; // 修正: 保存された投稿側でもパスワードを持てるように追加
 };
 
 export type BoardPostInput = {
   tourId: string;
   showId?: string;
   venue?: string;
-  authorName: string; // ★ 必須の string に戻す
+  authorName: string;
   body: string;
   tags?: BoardTagType[];
+  deletePassword?: string;
 };
 
 // 選択できるタグの型定義（曲・MCなどの公演メモ用）
@@ -61,15 +63,17 @@ export type TagType = "演出全般" | "モニター映像" | "衣装";
 export type ItemPost = {
   id: string;
   itemId: string;
-  authorName: string; // ★ 必須の string に戻す
+  authorName: string;
   body: string;
   tags?: TagType[];
   createdAt: string;
+  deletePassword?: string; // 修正: 保存された投稿側でもパスワードを持てるように追加
 };
 
 export type ItemPostInput = {
   itemId: string;
-  authorName: string; // ★ 必須の string に戻す
+  authorName: string;
   body: string;
   tags?: TagType[];
+  deletePassword?: string;
 };
