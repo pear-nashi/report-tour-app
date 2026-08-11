@@ -58,7 +58,7 @@ export type BoardPostInput = {
 };
 
 // 選択できるタグの型定義（曲・MCなどの公演メモ用）
-export type TagType = "演出全般" | "モニター映像" | "衣装";
+export type TagType = "演出全般" | "モニター映像" | "衣装" | "ガチャ";
 
 export type ItemPost = {
   id: string;

@@ -17,23 +17,23 @@ export function TextPostCard({
   return (
     <article
       className={cn(
-        "border-b border-slate-200 px-1 py-4 last:border-b-0 sm:px-2 sm:py-5",
+        "border-b border-slate-200 px-1 py-1.5 last:border-b-0 sm:px-2 sm:py-1",
         className,
       )}
     >
-      {/* 投稿者名と日時 */}
-      <div className="mb-2 flex items-baseline gap-2">
-        <span className="font-bold text-slate-900">
-          {authorName || "名無しさん"}
-        </span>
-        <span className="text-xs text-slate-600 font-semibold">
-          · {formatDateTime(createdAt)}
-        </span>
-      </div>
       {/* 本文：くっきり濃い黒 */}
       <p className="whitespace-pre-wrap text-[15px] leading-7 text-black font-normal">
         {body}
       </p>
+
+      {/* 投稿者名と日時を右下に配置 */}
+      <div className="mt-1.5 flex flex-wrap items-center justify-end gap-x-2 text-right text-xs text-slate-600 font-semibold">
+        <span className="font-bold text-slate-900">
+          {authorName || "名無しさん"}
+        </span>
+        <span>·</span>
+        <span>{formatDateTime(createdAt)}</span>
+      </div>
     </article>
   );
 }

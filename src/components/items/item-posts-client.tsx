@@ -18,7 +18,7 @@ import {
 import type { ItemPost, TagType } from "@/types/app";
 
 const MAX_LENGTH = 200;
-const AVAILABLE_TAGS: TagType[] = ["演出全般", "モニター映像", "衣装"];
+const AVAILABLE_TAGS: TagType[] = ["演出全般", "モニター映像", "衣装", "ガチャ"];
 const LOCAL_STORAGE_KEY = "my_item_post_ids";
 
 type ItemPostsClientProps = {
@@ -181,14 +181,14 @@ export function ItemPostsClient({ itemId }: ItemPostsClientProps) {
             まだコメントがありません。最初のコメントを投稿してみましょう！
           </p>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {posts.map((post) => {
               const isMyPost = myPostIds.includes(post.id);
 
               return (
                 <div
                   key={post.id}
-                  className="relative group rounded-3xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition-all"
+                  className="relative group rounded-2xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md transition-all"
                 >
                   {/* 自分の投稿、またはパスワードがある投稿には削除ボタンを表示 */}
                   {(isMyPost || post.deletePassword) && (

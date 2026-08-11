@@ -10,7 +10,7 @@ import {
 } from "@/lib/store";
 import type { ItemPost, TagType, TimelineItem, Show } from "@/types/app";
 
-const TAGS: TagType[] = ["演出全般", "モニター映像", "衣装"];
+const TAGS: TagType[] = ["演出全般", "モニター映像", "衣装", "ガチャ"];
 
 type TagPostsClientProps = {
   tourId: string;
