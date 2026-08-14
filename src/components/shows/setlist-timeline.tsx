@@ -50,7 +50,7 @@ export function SetlistTimeline({ showId }: { showId: string }) {
             {tour.name}
           </span>
         )}
-        <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">{show.label}</h1>
+        <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">{show.label}</h1>
         <p className="mt-2 text-sm font-medium text-slate-700">
           セットリスト（曲順）になっています。コメントしたいものを選択して自由にコメントをどうぞ！
         </p>
