@@ -20,14 +20,15 @@ export default async function TourSearchPage({ params }: TourSearchPageProps) {
   const boardPosts = await getBoardPostsByTourId(id);
   const itemPosts = await getItemPostsByTourId(id);
 
-  // 2. それぞれの投稿に、表示用の付加情報（会場、日付、曲名など）を紐づける
+  // 2. それぞれの投稿に、表示用の付加情報や種類（type）を紐づける
   const formattedBoardPosts = boardPosts.map((post) => ({
     id: post.id,
     body: post.body,
     authorName: post.authorName,
     venue: post.venue || "会場共通",
-    date: undefined, // 掲示板には個別の日付がない場合は会場名のみ等でカバー
+    date: undefined, 
     title: "会場レポ・構成",
+    type: "board" as const, // 掲示板レポ用の目印
   }));
 
   const formattedItemPosts = itemPosts.map((post) => {
@@ -40,6 +41,7 @@ export default async function TourSearchPage({ params }: TourSearchPageProps) {
       venue: show ? show.venue : "不明な会場",
       date: show ? `${show.date} (${show.time})` : undefined,
       title: item ? item.title : "セットリスト・MC",
+      type: "item" as const, // セトリ・MC項目用の目印
     };
   });
 
@@ -50,9 +52,13 @@ export default async function TourSearchPage({ params }: TourSearchPageProps) {
       <BackLink href={`/tours/${id}`} label={`${tour?.name ?? "ツアー"}へ戻る`} />
       
       <div className="mb-6">
-        <h1 className="text-2xl font-black text-slate-900 sm:text-3xl tracking-wide">キーワード検索</h1>
+        <h1 className="text-xl font-black text-slate-900 sm:text-2xl tracking-wide">キーワード検索</h1>
         <p className="mt-2 text-sm text-slate-600 font-bold">
-          ツアー内の全投稿から、キーワードで絞り込みます
+          ツアー内の全投稿から、キーワードで絞り込みます。
+        </p>
+        <p className="mt-1 text-xs text-slate-400 font-medium">
+          💡 メンバー名で検索したいときは、苗字で検索するとあだ名での投稿もいい感じで検索対象に含めています<br />
+          （自動あだ名検索の設定は当たり前に手動なので、特殊なあだ名を利用した投稿は検索できません。ごめんね。）
         </p>
       </div>
 
