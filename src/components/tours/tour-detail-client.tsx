@@ -76,50 +76,69 @@ export function TourDetailClient({ tourId }: TourDetailClientProps) {
 
   return (
     <div className="text-slate-900">
-      <BackLink href="/" label="トップへ" />
-      <PageIntro
-        eyebrow={artist?.name}
-        title={tour.name}
-        description="会場ごとの構成レポや、各公演のセットリスト・MCレポを確認できます。"
-      />
+    <BackLink href="/" label="トップへ" />
+    <PageIntro
+      eyebrow={artist?.name}
+      title={tour.name}
+      description="会場ごとの構成レポや、各公演のセットリスト・MCレポを確認できます。"
+    />
 
-      {/* 1. 演出タグありコメントのツアー全体まとめ */}
-      <div className="mb-4">
-        <Link
-          href={`/tours/${tour.id}/tags`}
-          className="flex items-center justify-between rounded-2xl border border-emerald-200 bg-emerald-50/80 p-4 transition-all hover:bg-emerald-100/80 hover:border-emerald-300 shadow-sm"
-        >
-          <div className="flex items-center gap-3">
-            <span className="text-xl">🏷️</span>
-            <div>
-              <p className="font-bold text-emerald-950">演出タグ付きコメントまとめ</p>
-              <p className="text-xs text-slate-600 font-medium">「衣装」「モニター映像」「演出全般」などのタグ付きコメントを公演日横断でチェック</p>
-            </div>
+    {/* 1. 演出タグありコメントのツアー全体まとめ */}
+    <div className="mb-4">
+      <Link
+        href={`/tours/${tour.id}/tags`}
+        className="flex items-center justify-between rounded-2xl border border-emerald-200 bg-emerald-50/80 p-4 transition-all hover:bg-emerald-100/80 hover:border-emerald-300 shadow-sm"
+      >
+        <div className="flex items-center gap-3">
+          <span className="text-xl">🏷️</span>
+          <div>
+            <p className="font-bold text-emerald-950">演出タグ付きコメントまとめ</p>
+            <p className="text-xs text-slate-600 font-medium">「衣装」「モニター映像」「演出全般」などのタグ付きコメントを公演日横断でチェック</p>
           </div>
-          <span className="text-xs font-bold text-emerald-800 bg-white px-3 py-1.5 rounded-xl border border-emerald-200 shadow-sm">
-            開く →
-          </span>
-        </Link>
-      </div>
+        </div>
+        <span className="text-xs font-bold text-emerald-800 bg-white px-3 py-1.5 rounded-xl border border-emerald-200 shadow-sm">
+          開く →
+        </span>
+      </Link>
+    </div>
 
-      {/* 2. MC・挨拶 振り返りログへのリンク */}
-      <div className="mb-6">
-        <Link
-          href={`/tours/${tour.id}/words`}
-          className="flex items-center justify-between rounded-2xl border border-blue-200 bg-blue-50/80 p-4 transition-all hover:bg-blue-100/80 hover:border-blue-300 shadow-sm"
-        >
-          <div className="flex items-center gap-3">
-            <span className="text-xl">💬</span>
-            <div>
-              <p className="font-bold text-blue-950">MC・挨拶 まとめ</p>
-              <p className="text-xs text-slate-600 font-medium">MCや挨拶を公演日横断でチェック</p>
-            </div>
+    {/* 2. MC・挨拶 振り返りログへのリンク */}
+    <div className="mb-4">
+      <Link
+        href={`/tours/${tour.id}/words`}
+        className="flex items-center justify-between rounded-2xl border border-blue-200 bg-blue-50/80 p-4 transition-all hover:bg-blue-100/80 hover:border-blue-300 shadow-sm"
+      >
+        <div className="flex items-center gap-3">
+          <span className="text-xl">💬</span>
+          <div>
+            <p className="font-bold text-blue-950">MC・挨拶 まとめ</p>
+            <p className="text-xs text-slate-600 font-medium">MCや挨拶を公演日横断でチェック</p>
           </div>
-          <span className="text-xs font-bold text-blue-800 bg-white px-3 py-1.5 rounded-xl border border-blue-200 shadow-sm">
-            開く →
-          </span>
-        </Link>
-      </div>
+        </div>
+        <span className="text-xs font-bold text-blue-800 bg-white px-3 py-1.5 rounded-xl border border-blue-200 shadow-sm">
+          開く →
+        </span>
+      </Link>
+    </div>
+
+    {/* 3. キーワード検索へのリンク */}
+    <div className="mb-6">
+      <Link
+        href={`/tours/${tour.id}/search`}
+        className="flex items-center justify-between rounded-2xl border border-amber-200 bg-amber-50/80 p-4 transition-all hover:bg-amber-100/80 hover:border-amber-300 shadow-sm"
+      >
+        <div className="flex items-center gap-3">
+          <span className="text-xl">🔍</span>
+          <div>
+            <p className="font-bold text-amber-950">キーワード検索</p>
+            <p className="text-xs text-slate-600 font-medium">ツアー内の投稿から任意のキーワードで絞り込み</p>
+          </div>
+        </div>
+        <span className="text-xs font-bold text-amber-800 bg-white px-3 py-1.5 rounded-xl border border-amber-200 shadow-sm">
+          開く →
+        </span>
+      </Link>
+    </div>
 
       <div className="space-y-6">
         {showBlocks.map((block) => (

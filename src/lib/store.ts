@@ -78,7 +78,7 @@ export async function getAllBoardPosts(): Promise<BoardPost[]> {
     authorName: row.author_name,
     body: row.body,
     tags: row.tags || [],
-    deletePassword: row.delete_password || undefined, // 修正: マッピングを追加
+    deletePassword: row.delete_password || undefined,
     createdAt: row.created_at,
   }));
 
@@ -129,6 +129,22 @@ export async function getItemPostsByItemId(itemId: string): Promise<ItemPost[]> 
   return posts.filter((post) => post.itemId === itemId);
 }
 
+// 【追加】指定したツアーIDに紐づくすべてのタイムライン投稿を取得する関数
+export async function getItemPostsByTourId(tourId: string): Promise<ItemPost[]> {
+  const showList = getShowsByTourId(tourId);
+  const showIds = new Set(showList.map((show) => show.id));
+
+  // このツアーの公演に含まれるタイムライン項目のIDをすべて集める
+  const tourItemIds = new Set(
+    timelineItems
+      .filter((item) => showIds.has(item.showId))
+      .map((item) => item.id)
+  );
+
+  const allItemPosts = await getAllItemPosts();
+  return allItemPosts.filter((post) => tourItemIds.has(post.itemId));
+}
+
 export async function getItemPostsByTag(tag: TagType): Promise<ItemPost[]> {
   const posts = await getAllItemPosts();
   return posts.filter((post) => post.tags && post.tags.includes(tag));
@@ -149,7 +165,7 @@ export async function createBoardPost(input: BoardPostInput): Promise<BoardPost>
     author_name: input.authorName.trim() || "匿名",
     body: input.body.trim(),
     tags: input.tags || [],
-    delete_password: input.deletePassword?.trim() || null, // 修正: パスワードを保存するように追加
+    delete_password: input.deletePassword?.trim() || null,
   };
 
   const { data, error } = await supabase
