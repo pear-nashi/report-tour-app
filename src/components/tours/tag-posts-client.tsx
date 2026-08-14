@@ -166,7 +166,9 @@ export function TagPostsClient({ tourId }: TagPostsClientProps) {
               </div>
 
               <div className="p-4 space-y-3">
-                {group.posts.map(({ post, show }) => (
+              {group.posts
+                  .sort((a, b) => new Date(a.show.date).getTime() - new Date(b.show.date).getTime())
+                  .map(({ post, show }) => (
                   <div
                     key={post.id}
                     className="rounded-2xl border border-slate-200 bg-slate-50/40 p-4"
@@ -175,9 +177,7 @@ export function TagPostsClient({ tourId }: TagPostsClientProps) {
                       {post.body}
                     </p>
                     <div className="mt-3 flex flex-wrap items-center justify-end gap-x-2 gap-y-1 text-right text-[11px] text-slate-500 font-bold">
-                      <span className="text-slate-600">📍 {show.venue}（{show.date}）</span>
-                      <span>・</span>
-                      <span>{post.authorName || "匿名"}</span>
+                      <span className="text-slate-600">📍{show.venue}（{show.date} {show.time}）・{post.authorName || "匿名"}</span>
                     </div>
                   </div>
                 ))}

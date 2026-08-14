@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { cn, formatDateTime } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 type TextPostCardProps = {
   authorName: string;
@@ -14,6 +14,18 @@ export function TextPostCard({
   createdAt,
   className,
 }: TextPostCardProps) {
+  // 日付と時間を「3/1 19:00」のような形式に変換する処理
+  const formattedDateTime = (() => {
+    if (!createdAt) return "";
+    const date = new Date(createdAt);
+    if (isNaN(date.getTime())) return createdAt;
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    return `${month}/${day} ${hours}:${minutes}`;
+  })();
+
   return (
     <article
       className={cn(
@@ -27,12 +39,12 @@ export function TextPostCard({
       </p>
 
       {/* 投稿者名と日時を右下に配置 */}
-      <div className="mt-1.5 flex flex-wrap items-center justify-end gap-x-2 text-right text-xs text-slate-600 font-semibold">
+      <div className="mt-1 flex flex-wrap items-center justify-end gap-x-2 text-right text-xs text-slate-600 font-semibold">
         <span className="font-bold text-slate-900">
           {authorName || "名無しさん"}
         </span>
         <span>·</span>
-        <span>{formatDateTime(createdAt)}</span>
+        <span>{formattedDateTime}</span>
       </div>
     </article>
   );
