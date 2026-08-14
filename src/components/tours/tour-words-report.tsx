@@ -185,15 +185,16 @@ export function TourWordsReport({ tourId }: TourWordsReportProps) {
                 </div>
 
                 {/* 各コメントカード */}
-                <div className="p-4 space-y-3">
+                <div className="p-2 space-y-2">
                   {filteredPosts.map(({ post, type }) => (
                     <div
                       key={post.id}
-                      className="rounded-2xl border border-slate-200 bg-slate-50/40 p-4 relative space-y-2"
+                      className="rounded-2xl border border-slate-200 bg-slate-50/40 px-3 py-2.5 relative space-y-1"
                     >
+                      {/* 右上にバッジを配置 */}
                       <div className="flex items-center justify-end">
                         <span
-                          className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                          className={`px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider ${
                             type === "mc"
                               ? "bg-blue-50 text-blue-600 border border-blue-200"
                               : "bg-purple-50 text-purple-600 border border-purple-200"
@@ -207,7 +208,7 @@ export function TourWordsReport({ tourId }: TourWordsReportProps) {
                         {post.body}
                       </p>
 
-                      <div className="mt-3 flex items-center justify-end text-[11px] text-slate-400 font-bold">
+                      <div className="flex items-center justify-end text-[10px] text-slate-400 font-bold">
                         <span>{post.authorName || "匿名"}</span>
                       </div>
                     </div>

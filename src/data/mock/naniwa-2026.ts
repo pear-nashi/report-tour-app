@@ -9,9 +9,9 @@ export const tour: Tour = {
 
 export const shows: Show[] = [
   // 北海道
-  { id: "naniwa-hokkaido-0711-1330", tourId: "naniwa-2026", venue: "北海道立総合体育センター（北海きたえーる）", date: "2026-07-11", time: "13:30", label: "7/11 北海道立総合体育センター（北海きたえーる） 13:30公演" },
-  { id: "naniwa-hokkaido-0711-1800", tourId: "naniwa-2026", venue: "北海道立総合体育センター（北海きたえーる）", date: "2026-07-11", time: "18:00", label: "7/11 北海道立総合体育センター（北海きたえーる） 18:00公演" },
-  { id: "naniwa-hokkaido-0712-1400", tourId: "naniwa-2026", venue: "北海道立総合体育センター（北海きたえーる）", date: "2026-07-12", time: "14:00", label: "7/12 北海道立総合体育センター（北海きたえーる） 14:00公演" },
+  { id: "naniwa-hokkaido-0711-1330", tourId: "naniwa-2026", venue: "北海きたえーる", date: "2026-07-11", time: "13:30", label: "7/11 北海道立総合体育センター（北海きたえーる） 13:30公演" },
+  { id: "naniwa-hokkaido-0711-1800", tourId: "naniwa-2026", venue: "北海きたえーる", date: "2026-07-11", time: "18:00", label: "7/11 北海道立総合体育センター（北海きたえーる） 18:00公演" },
+  { id: "naniwa-hokkaido-0712-1400", tourId: "naniwa-2026", venue: "北海きたえーる", date: "2026-07-12", time: "14:00", label: "7/12 北海道立総合体育センター（北海きたえーる） 14:00公演" },
 
   // 福岡県
   { id: "naniwa-fukuoka-0718-1330", tourId: "naniwa-2026", venue: "マリンメッセ福岡A館", date: "2026-07-18", time: "13:30", label: "7/18 マリンメッセ福岡A館 13:30公演" },
@@ -44,10 +44,10 @@ export const shows: Show[] = [
   { id: "naniwa-osaka-0826-1800", tourId: "naniwa-2026", venue: "大阪城ホール", date: "2026-08-26", time: "18:00", label: "8/26 大阪城ホール 18:00公演" },
 
   // 新潟県
-  { id: "naniwa-niigata-0905-1330", tourId: "naniwa-2026", venue: "朱鷺メッセ 新潟コンベンションセンター", date: "2026-09-05", time: "13:30", label: "9/5 朱鷺メッセ 新潟コンベンションセンター 13:30公演" },
-  { id: "naniwa-niigata-0905-1800", tourId: "naniwa-2026", venue: "朱鷺メッセ 新潟コンベンションセンター", date: "2026-09-05", time: "18:00", label: "9/5 朱鷺メッセ 新潟コンベンションセンター 18:00公演" },
-  { id: "naniwa-niigata-0906-1300", tourId: "naniwa-2026", venue: "朱鷺メッセ 新潟コンベンションセンター", date: "2026-09-06", time: "13:00", label: "9/6 朱鷺メッセ 新潟コンベンションセンター 13:00公演" },
-  { id: "naniwa-niigata-0906-1730", tourId: "naniwa-2026", venue: "朱鷺メッセ 新潟コンベンションセンター", date: "2026-09-06", time: "17:30", label: "9/6 朱鷺メッセ 新潟コンベンションセンター 17:30公演" },
+  { id: "naniwa-niigata-0905-1330", tourId: "naniwa-2026", venue: "朱鷺メッセ", date: "2026-09-05", time: "13:30", label: "9/5 朱鷺メッセ 新潟コンベンションセンター 13:30公演" },
+  { id: "naniwa-niigata-0905-1800", tourId: "naniwa-2026", venue: "朱鷺メッセ", date: "2026-09-05", time: "18:00", label: "9/5 朱鷺メッセ 新潟コンベンションセンター 18:00公演" },
+  { id: "naniwa-niigata-0906-1300", tourId: "naniwa-2026", venue: "朱鷺メッセ", date: "2026-09-06", time: "13:00", label: "9/6 朱鷺メッセ 新潟コンベンションセンター 13:00公演" },
+  { id: "naniwa-niigata-0906-1730", tourId: "naniwa-2026", venue: "朱鷺メッセ", date: "2026-09-06", time: "17:30", label: "9/6 朱鷺メッセ 新潟コンベンションセンター 17:30公演" },
 
   // 香川県
   { id: "naniwa-kagawa-0919-1330", tourId: "naniwa-2026", venue: "あなぶきアリーナ香川", date: "2026-09-19", time: "13:30", label: "9/19 あなぶきアリーナ香川 13:30公演" },
